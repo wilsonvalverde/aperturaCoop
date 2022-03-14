@@ -14,7 +14,7 @@ export default {
   data: function () {
     return {
       estado: false,
-      camera: true,
+      camera: false,
       valid: 5,
       name: "wilson",
       email_user: "",
@@ -31,7 +31,6 @@ export default {
     $("#fingercode").val("");
   },
   mounted: function () {
-    var globales = this;
     this.$color = "blue";
     $("#dni").val("");
     $("#fingercode").val("");
@@ -39,33 +38,11 @@ export default {
     $("#email_user").val("");
     this.$session.destroy();
     // Prefer camera resolution nearest to 1280x720.
-    var constraints = {
-      video: { width: { min: 2.048 }, height: { min: 1.082 } },
-    };
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(function (stream) {
-        stream.oninactive = false;
-
-        stream.getVideoTracks()[0].stop();
-        console.log("restricciones --", constraints);
-        console.log("todo correcto ---", stream);
-        globales.camera = true;
-        console.log("estado de camera--", globales.camera);
-      })
-      .catch(function (err) {
-        console.log(err.name + ": " + err.message);
-        alert(
-          "Se necesita conceder permisos de camara, para poder continuar con la validacion"
-        );
-        globales.camera = false;
-        console.log("estado de camera--", globales.camera);
-      });
+    console.log("estado camera ", this.getCamera(), this.camera);
     // this.$session.set('globa', 25);
   },
   methods: {
-    getCamera: function () {
+    getCamera: function (action = false) {
       var globales = this;
       var constraints = {
         video: { width: { min: 2.048 }, height: { min: 1.082 } },
@@ -77,18 +54,14 @@ export default {
           stream.oninactive = false;
 
           stream.getVideoTracks()[0].stop();
-          console.log("restricciones --", constraints);
-          console.log("todo correcto ---", stream);
+          //console.log("restricciones --", constraints);
+          //console.log("todo correcto ---", stream);
           globales.camera = true;
-          console.log("estado de camera--", globales.camera);
+          action && globales.submitRegister();
         })
         .catch(function (err) {
-          console.log(err.name + ": " + err.message);
-          alert(
-            "Se necesita conceder permisos de camara, para poder continuar con la validacion"
-          );
           globales.camera = false;
-          console.log("estado de camera--", globales.camera);
+          console.log(err.name + ": " + err.message);
         });
     },
     validate: function (a, b) {
@@ -149,8 +122,8 @@ export default {
       this.$session.start();
       this.$router.push("/banca");
     },
-    submitRegister: function (event) {
-      event.preventDefault();
+    submitRegister: function () {
+      console.log("llegamos a funcion");
       var variables = this;
       const formData = new FormData(this.$refs["data-register"]); // reference to form element
       const data = {}; // need to convert it before using not with XMLHttpRequest
@@ -204,10 +177,11 @@ export default {
           long: this.header.longitud,
           Authorization: "Bearer " + this.header.token,
         };
+
         this.$http
           .post(APIS[3].name, body, { headers })
           .then((response) => {
-            //console.log(response);
+            console.log(response);
             if (response.status == 200) {
               if (response.data.status) {
                 this.$session.start();
@@ -254,7 +228,7 @@ export default {
         <form
           ref="data-register"
           id="demo-form"
-          @submit.prevent="submitRegister"
+          @submit.prevent="getCamera((action = true))"
           class="form-register"
         >
           <label class="form-label-register" for="#dni"

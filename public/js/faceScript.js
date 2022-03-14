@@ -1,5 +1,4 @@
 
-console.log('comenzamos 0122')
 var promisifiedOldGUM = function (constraints, successCallback, errorCallback) {
 
     // First get ahold of getUserMedia, if present
@@ -108,21 +107,19 @@ $("#ver").click(function () {
         btnCaptureHidden.addEventListener("click", function () {
             setTimeout(function () {
                 $("#msjSonrisa").html('Foto tomada');
-                context.drawImage(video, 0, 0, 150, 150);
+                console.log('atributos video,', dimensiones.width, dimensiones.height)
+                context.drawImage(video, 0, 0, dimensiones.width, dimensiones.height);
                 $("#capturar").click();
-            }, 1000);
-
-
-
+                clearInterval(smileDetection);
+            }, 3000);
         });
 
 
         faceapi.matchDimensions(canvass, dimensiones);
 
         //Dibuja cada 100ms
-        setInterval(async () => {
-
-
+        const smileDetection = setInterval(async () => {
+            console.log('Funcionando')
             //Detecta rostros.
             //withFaceLandmarks para detectar los puntos sobre el rostro (ojos, naríz, boca, cejas y contorno). A partir de los puntos se usa withFaceExpressions para detectar expresiones.
             const rostros = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
@@ -156,8 +153,8 @@ $("#ver").click(function () {
 
                 });
             }
+        }, 500);
 
-        }, 100);
 
     });
 });

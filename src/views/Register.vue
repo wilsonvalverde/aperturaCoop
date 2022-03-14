@@ -69,7 +69,7 @@ export default {
   },
   mounted: function () {
     if (this.$session.exists()) {
-      console.log(this.$session.get("number"));
+      // console.log(this.$session.get("number"));
       if (this.$session.get("number") == 1) {
         location.reload();
       }
@@ -548,16 +548,20 @@ export default {
         selfie_base64: strImage,
         email_user: this.email_user,
       };
-
+      //console.log("IMAGEN TOMADO------ ", body.selfie_base64);
       this.$http
         .post(this.APIS[4].name, body, { headers })
         .then((response) => {
+          console.log("respuesta-------------", response);
           if (response.status == 200) {
             if (response.data.confidence > 70) {
               this.imagenSelfie = strImage;
               this.numbersteps = 2;
               this.modalmessage =
-                "Reconocimiento Satisfactorio " + response.data.confidence;
+                "Reconocimiento Satisfactorio " +
+                response.data.confidence +
+                " Persona Real: " +
+                response.data.livenessPerson;
               this.$modal.show("modalmessage");
               this.addOptions();
               $("html, body").animate(
@@ -566,7 +570,7 @@ export default {
               );
             } else {
               this.msgError =
-                "Datos incorrectos intente de nuevo " +
+                "Datos incorrectos, intente de nuevo " +
                 response.data.confidence;
               this.$modal.show("modalError");
             }
@@ -756,7 +760,7 @@ export default {
           </p>
           <div class="cardvideo">
             <div v-show="this.imagenSelfie == null" class="video-wrap">
-              <video id="video" width="400" height="400" muted autoplay></video>
+              <video id="video" width="640" height="480" muted autoplay></video>
             </div>
             <canvas style="display: none" id="photoBio"></canvas>
           </div>
