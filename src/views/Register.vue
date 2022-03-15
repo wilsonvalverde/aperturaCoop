@@ -548,7 +548,7 @@ export default {
         selfie_base64: strImage,
         email_user: this.email_user,
       };
-      //console.log("IMAGEN TOMADO------ ", body.selfie_base64);
+      console.log("IMAGEN TOMADO------ ", body.selfie_base64);
       this.$http
         .post(this.APIS[4].name, body, { headers })
         .then((response) => {
@@ -760,7 +760,7 @@ export default {
           </p>
           <div class="cardvideo">
             <div v-show="this.imagenSelfie == null" class="video-wrap">
-              <video id="video" width="640" height="480" muted autoplay></video>
+              <video id="video" width="960" height="720" muted autoplay></video>
             </div>
             <canvas style="display: none" id="photoBio"></canvas>
           </div>
